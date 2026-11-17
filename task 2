@@ -1,0 +1,105 @@
+import java.util.Scanner;
+import java.time.LocalDateTime;
+import java.time.Duration;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        // Jagged Array: Different slots on each floor
+        String[][] parking = {
+            {"Empty", "Empty", "Empty"},
+            {"Empty", "Empty"},
+            {"Empty", "Empty", "Empty", "Empty"}
+        };
+
+        int floor, slot;
+        String vehicleNumber;
+        int minutes;
+        double hours, fee;
+        double rate = 20.0;
+
+        while (true) {
+
+            System.out.println("\n--- PARKING MANAGEMENT SYSTEM ---");
+            System.out.println("1. Park Vehicle");
+            System.out.println("2. View Parking Slots");
+            System.out.println("3. Calculate Parking Fee");
+            System.out.println("4. Exit");
+            System.out.print("Enter Choice: ");
+
+            int choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+
+                case 1:
+                    System.out.print("Enter Floor Number (0-2): ");
+                    floor = sc.nextInt();
+
+                    System.out.print("Enter Slot Number: ");
+                    slot = sc.nextInt();
+                    sc.nextLine();
+
+                    if (floor >= 0 && floor < parking.length &&
+                        slot >= 0 && slot < parking[floor].length) {
+
+                        if (parking[floor][slot].equals("Empty")) {
+
+                            System.out.print("Enter Vehicle Number: ");
+                            vehicleNumber = sc.nextLine();
+
+                            parking[floor][slot] = vehicleNumber;
+
+                            System.out.println("Vehicle Parked Successfully!");
+
+                        } else {
+                            System.out.println("Slot Already Occupied!");
+                        }
+
+                    } else {
+                        System.out.println("Invalid Floor or Slot!");
+                    }
+                    break;
+
+                case 2:
+                    System.out.println("\nParking Slot Details:");
+
+                    for (int i = 0; i < parking.length; i++) {
+                        System.out.println("Floor " + i + ":");
+
+                        for (int j = 0; j < parking[i].length; j++) {
+                            System.out.println(
+                                "Slot " + j + ": " + parking[i][j]
+                            );
+                        }
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Enter Parking Duration in Minutes: ");
+                    minutes = sc.nextInt();
+
+                    // Convert minutes into decimal hours
+                    hours = minutes / 60.0;
+
+                    // Calculate parking fee
+                    fee = hours * rate;
+
+                    System.out.println("Parking Duration: " + hours + " Hours");
+                    System.out.println("Parking Fee: Rs." + fee);
+                    break;
+
+                case 4:
+                    System.out.println("Thank You!");
+                    sc.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid Choice!");
+            }
+        }
+    }
+}
