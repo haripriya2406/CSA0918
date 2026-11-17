@@ -1,1 +1,189 @@
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
+class Vehicle {
+    private String vehicleNo;
+    private String vehicleType;
+    private String ownerName;
+
+    Vehicle() {
+        this("Unknown", "Unknown", "Unknown");
+    }
+
+    Vehicle(String vehicleNo, String vehicleType) {
+        this(vehicleNo, vehicleType, "Unknown");
+    }
+
+    Vehicle(String vehicleNo, String vehicleType, String ownerName) {
+        this.vehicleNo = vehicleNo;
+        this.vehicleType = vehicleType;
+        this.ownerName = ownerName;
+    }
+
+    public String getVehicleNo() {
+        return vehicleNo;
+    }
+
+    public void displayVehicle() {
+        System.out.println("Vehicle Number: " + vehicleNo);
+        System.out.println("Vehicle Type: " + vehicleType);
+        System.out.println("Owner Name: " + ownerName);
+    }
+}
+
+class ParkingSlot {
+    private int slotNumber;
+    private boolean available;
+
+    ParkingSlot() {
+        this(0, true);
+    }
+
+    ParkingSlot(int slotNumber) {
+        this(slotNumber, true);
+    }
+
+    ParkingSlot(int slotNumber, boolean available) {
+        this.slotNumber = slotNumber;
+        this.available = available;
+    }
+
+    public void displaySlot() {
+        System.out.println("Slot Number: " + slotNumber);
+        System.out.println("Available: " + available);
+    }
+}
+
+class ParkingTicket {
+    private static int nextTicketNumber = 1;
+
+    private int ticketNumber;
+    private Vehicle vehicle;
+    private int slotNumber;
+    private LocalDateTime entryTime;
+
+    ParkingTicket(Vehicle vehicle, int slotNumber) {
+        this(nextTicketNumber++, vehicle, slotNumber,
+                LocalDateTime.now());
+    }
+
+    ParkingTicket(int ticketNumber, Vehicle vehicle,
+                  int slotNumber, LocalDateTime entryTime) {
+        this.ticketNumber = ticketNumber;
+        this.vehicle = vehicle;
+        this.slotNumber = slotNumber;
+        this.entryTime = entryTime;
+    }
+
+    // Copy constructor
+    ParkingTicket(ParkingTicket ticket) {
+        this(ticket.ticketNumber, ticket.vehicle,
+                ticket.slotNumber, ticket.entryTime);
+    }
+
+    public void displayTicket() {
+        System.out.println("Ticket Number: " + ticketNumber);
+        System.out.println("Vehicle Number: " + vehicle.getVehicleNo());
+        System.out.println("Slot Number: " + slotNumber);
+        System.out.println("Entry Time: " + entryTime);
+    }
+}
+
+class Payment {
+    private double amount;
+    private boolean paid;
+
+    Payment() {
+        this(0.0, false);
+    }
+
+    Payment(double amount) {
+        this(amount, false);
+    }
+
+    Payment(double amount, boolean paid) {
+        this.amount = amount;
+        this.paid = paid;
+    }
+
+    public void calculateFee(int hours) {
+        amount = hours * 20.0;
+    }
+
+    public void makePayment() {
+        paid = true;
+        System.out.println("Payment Successful");
+        System.out.println("Amount: Rs." + amount);
+    }
+}
+
+class ParkingLot {
+    private ArrayList<ParkingSlot> slots;
+    private ArrayList<ParkingTicket> tickets;
+
+    ParkingLot() {
+        this(5);
+    }
+
+    ParkingLot(int capacity) {
+        slots = new ArrayList<>();
+        tickets = new ArrayList<>();
+
+        for (int i = 1; i <= capacity; i++) {
+            slots.add(new ParkingSlot(i));
+        }
+    }
+
+    public void generateTicket(Vehicle vehicle) {
+        if (tickets.size() >= slots.size()) {
+            System.out.println("Parking Full");
+            return;
+        }
+
+        int slotNumber = tickets.size() + 1;
+
+        ParkingTicket ticket =
+                new ParkingTicket(vehicle, slotNumber);
+
+        tickets.add(ticket);
+
+        ticket.displayTicket();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+
+        Vehicle v1 = new Vehicle(
+                "TN01AB1234", "Car", "Ravi");
+
+        Vehicle v2 = new Vehicle(
+                "TN02CD5678", "Bike");
+
+        System.out.println("VEHICLE DETAILS");
+        v1.displayVehicle();
+        v2.displayVehicle();
+
+        System.out.println("\nPARKING SLOT DETAILS");
+        ParkingSlot s1 = new ParkingSlot(1);
+        s1.displaySlot();
+
+        System.out.println("\nPARKING TICKET");
+        ParkingTicket t1 = new ParkingTicket(v1, 1);
+        t1.displayTicket();
+
+        System.out.println("\nCOPY TICKET");
+        ParkingTicket t2 = new ParkingTicket(t1);
+        t2.displayTicket();
+
+        System.out.println("\nPAYMENT DETAILS");
+        Payment p1 = new Payment();
+        p1.calculateFee(3);
+        p1.makePayment();
+
+        System.out.println("\nPARKING LOT");
+        ParkingLot lot = new ParkingLot(5);
+        lot.generateTicket(v2);
+    }
+}
