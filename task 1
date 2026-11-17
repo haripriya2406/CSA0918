@@ -1,0 +1,166 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Vehicle {
+    String regNo;
+    String type;
+    String entryTime;
+
+    Vehicle(String regNo, String type, String entryTime) {
+        this.regNo = regNo;
+        this.type = type;
+        this.entryTime = entryTime;
+    }
+}
+
+class ParkingSlot {
+    int slotNumber;
+    boolean isAvailable;
+
+    ParkingSlot(int slotNumber) {
+        this.slotNumber = slotNumber;
+        this.isAvailable = true;
+    }
+}
+
+class ParkingTicket {
+    static int nextTicketNumber = 1;
+    int ticketNumber;
+    Vehicle vehicle;
+    int slotNumber;
+
+    ParkingTicket(Vehicle vehicle, int slotNumber) {
+        this.ticketNumber = nextTicketNumber++;
+        this.vehicle = vehicle;
+        this.slotNumber = slotNumber;
+    }
+}
+
+class Payment {
+    double calculateFee(int hours) {
+        return hours * 20;
+    }
+}
+
+class ParkingLot {
+    ArrayList<Vehicle> vehicles = new ArrayList<>();
+    ArrayList<ParkingSlot> slots = new ArrayList<>();
+
+    ParkingLot(int capacity) {
+        for (int i = 1; i <= capacity; i++) {
+            slots.add(new ParkingSlot(i));
+        }
+    }
+
+    void parkVehicle(Vehicle vehicle) {
+        for (ParkingSlot slot : slots) {
+            if (slot.isAvailable) {
+                slot.isAvailable = false;
+                vehicles.add(vehicle);
+
+                ParkingTicket ticket =
+                    new ParkingTicket(vehicle, slot.slotNumber);
+
+                System.out.println("Vehicle Parked Successfully");
+                System.out.println("Ticket Number: " + ticket.ticketNumber);
+                System.out.println("Slot Number: " + ticket.slotNumber);
+                return;
+            }
+        }
+        System.out.println("Parking Full!");
+    }
+
+    void findVehicle(String regNo) {
+        for (Vehicle v : vehicles) {
+            if (v.regNo.equals(regNo)) {
+                System.out.println("Vehicle Found");
+                System.out.println("Registration: " + v.regNo);
+                System.out.println("Type: " + v.type);
+                System.out.println("Entry Time: " + v.entryTime);
+                return;
+            }
+        }
+        System.out.println("Vehicle Not Found");
+    }
+
+    void exitVehicle(String regNo, int hours) {
+        for (Vehicle v : vehicles) {
+            if (v.regNo.equals(regNo)) {
+                Payment payment = new Payment();
+                System.out.println("Parking Fee: Rs."
+                        + payment.calculateFee(hours));
+
+                vehicles.remove(v);
+
+                for (ParkingSlot slot : slots) {
+                    if (!slot.isAvailable) {
+                        slot.isAvailable = true;
+                        break;
+                    }
+                }
+
+                System.out.println("Vehicle Exited Successfully");
+                return;
+            }
+        }
+        System.out.println("Vehicle Not Found");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        ParkingLot parking = new ParkingLot(5);
+
+        while (true) {
+            System.out.println("\n1. Park Vehicle");
+            System.out.println("2. Find Vehicle");
+            System.out.println("3. Exit Vehicle");
+            System.out.println("4. Exit Program");
+            System.out.print("Enter Choice: ");
+
+            int choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Registration Number: ");
+                    String regNo = sc.nextLine();
+
+                    System.out.print("Vehicle Type: ");
+                    String type = sc.nextLine();
+
+                    System.out.print("Entry Time: ");
+                    String entryTime = sc.nextLine();
+
+                    Vehicle v = new Vehicle(regNo, type, entryTime);
+                    parking.parkVehicle(v);
+                    break;
+
+                case 2:
+                    System.out.print("Enter Registration Number: ");
+                    parking.findVehicle(sc.nextLine());
+                    break;
+
+                case 3:
+                    System.out.print("Enter Registration Number: ");
+                    String number = sc.nextLine();
+
+                    System.out.print("Parking Hours: ");
+                    int hours = sc.nextInt();
+
+                    parking.exitVehicle(number, hours);
+                    break;
+
+                case 4:
+                    System.out.println("Program Terminated");
+                    sc.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid Choice");
+            }
+        }
+    }
+}
